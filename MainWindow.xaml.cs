@@ -170,6 +170,7 @@ namespace HotelsApp
                 var cities = dbContext.Addresses.Select(a => a.Cities).Distinct().ToList();
                 CityComboBox.ItemsSource = cities;
                 CityComboBox.SelectedIndex = 0;
+                CityComboBox.SelectionChanged += CityComboBox_SelectionChanged;
 
                 // Загрузка количества гостей
                 GuestsComboBox.Items.Clear();
@@ -187,6 +188,11 @@ namespace HotelsApp
                 var amenities = dbContext.Amenities.ToList();
                 amenityViewModels = amenities.Select(a => new AmenityViewModel { Amenity = a }).ToList();
                 AmenitiesListBox.ItemsSource = amenityViewModels;
+
+                // Инициализация значений фильтров
+                StarRatingComboBox.SelectedIndex = 0;
+                MinPriceTextBox.Text = "0";
+                MaxPriceTextBox.Text = "10000";
             }
             catch (Exception ex)
             {
@@ -442,8 +448,8 @@ namespace HotelsApp
                                   $"Тип номера: {selectedRoom.RoomTypes.TypeName}\n" +
                                   $"Даты: {checkInDate.Value:d} - {checkOutDate.Value:d}\n" +
                                   $"Количество ночей: {roomViewModel.TotalNights}\n" +
-                                  $"Цена за ночь: {selectedRoom.RoomTypes.BasePrice:C}\n" +
-                                  $"Итого к оплате: {roomViewModel.TotalPrice:C}",
+                                  $"Цена за ночь: ${selectedRoom.RoomTypes.BasePrice:N2}\n" +
+                                  $"Итого к оплате: ${roomViewModel.TotalPrice:N2}",
                                   "Подтверждение бронирования",
                                   MessageBoxButton.YesNo,
                                   MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -462,7 +468,7 @@ namespace HotelsApp
                     dbContext.Bookings.Add(booking);
                     dbContext.SaveChanges();
 
-                    MessageBox.Show($"Номер успешно забронирован! Сумма к оплате: {roomViewModel.TotalPrice:C}",
+                    MessageBox.Show($"Номер успешно забронирован! Сумма к оплате: ${roomViewModel.TotalPrice:N2}",
                         "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     LoadUserBookings();
@@ -701,6 +707,14 @@ namespace HotelsApp
                         room.TotalNights = (int)(checkOutDate - checkInDate).TotalDays;
                     }
                 }
+            }
+        }
+
+        private void CityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (HotelsListView?.SelectedItem != null)
+            {
+                HotelsListView_SelectionChanged(null, null);
             }
         }
 

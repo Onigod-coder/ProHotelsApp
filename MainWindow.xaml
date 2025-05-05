@@ -172,69 +172,6 @@
                             </Grid>
                         </Border>
 
-                        <!-- Фильтры -->
-                        <Expander Grid.Row="1" Header="Дополнительные фильтры" Margin="0 0 0 10" IsExpanded="False">
-                            <Border Background="White" CornerRadius="4" Padding="15" 
-                                    BorderBrush="#FFE0E0E0" BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Margin="0 0 10 0">
-                                        <TextBlock Text="Категория отеля" FontSize="12" FontWeight="SemiBold"/>
-                                        <ComboBox x:Name="StarRatingComboBox" Height="30" Margin="0 5 0 0">
-                                            <ComboBoxItem Content="Любая категория" IsSelected="True"/>
-                                            <ComboBoxItem Content="1 звезда"/>
-                                            <ComboBoxItem Content="2 звезды"/>
-                                            <ComboBoxItem Content="3 звезды"/>
-                                            <ComboBoxItem Content="4 звезды"/>
-                                            <ComboBoxItem Content="5 звезд"/>
-                                        </ComboBox>
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="1" Margin="0 0 10 0">
-                                        <TextBlock Text="Тип номера" FontSize="12" FontWeight="SemiBold"/>
-                                        <ComboBox x:Name="RoomTypeComboBox" DisplayMemberPath="TypeName" 
-                                                  SelectedValuePath="RoomTypeID" Height="30" Margin="0 5 0 0"
-                                                  SelectionChanged="RoomTypeComboBox_SelectionChanged"/>
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="2" Margin="0 0 10 0">
-                                        <TextBlock Text="Цена за ночь" FontSize="12" FontWeight="SemiBold"/>
-                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                            <TextBox x:Name="MinPriceTextBox" Width="70" Height="30" 
-                                                     Text="0" Margin="0 0 5 0"/>
-                                            <TextBlock Text="-" VerticalAlignment="Center" Margin="5 0 5 0"/>
-                                            <TextBox x:Name="MaxPriceTextBox" Width="70" Height="30" 
-                                                     Text="10000" Margin="5 0 0 0"/>
-                                        </StackPanel>
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="3">
-                                        <TextBlock Text="Удобства" FontSize="12" FontWeight="SemiBold"/>
-                                        <Border Background="White" CornerRadius="4" Padding="5" 
-                                                BorderBrush="#FFE0E0E0" BorderThickness="1" 
-                                                Height="100" Margin="0 5 0 0">
-                                            <ListBox x:Name="AmenitiesListBox" SelectionMode="Multiple" 
-                                                    BorderThickness="0" Background="Transparent">
-                                                <ListBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <CheckBox Content="{Binding AmenityName}" 
-                                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                                  Margin="2"/>
-                                                    </DataTemplate>
-                                                </ListBox.ItemTemplate>
-                                            </ListBox>
-                                        </Border>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </Expander>
-
                         <!-- Результаты поиска -->
                         <Grid Grid.Row="2">
                             <Grid.ColumnDefinitions>
@@ -302,83 +239,152 @@
                                         <TextBlock x:Name="SelectedHotelDescription" Grid.Row="2" Margin="0 10 0 0" 
                                                    TextWrapping="Wrap"/>
 
-                                        <TabControl Grid.Row="3" Margin="0 20 0 0" Height="300">
-                                            <TabItem Header="Номера">
-                                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                                    <ListView x:Name="RoomsListView" Grid.Row="1" Margin="10">
-                                                        <ListView.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Grid Margin="5">
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="150"/>
-                                                                        <ColumnDefinition Width="*"/>
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <Image Width="150" Height="100" Stretch="UniformToFill">
-                                                                        <Image.Style>
-                                                                            <Style TargetType="Image">
-                                                                                <Style.Triggers>
-                                                                                    <DataTrigger Binding="{Binding RoomImage}" Value="{x:Null}">
-                                                                                        <Setter Property="Source" Value="/Resources/Rooms/default.jpg"/>
-                                                                                    </DataTrigger>
-                                                                                </Style.Triggers>
-                                                                                <Setter Property="Source" Value="{Binding RoomImage}"/>
-                                                                            </Style>
-                                                                        </Image.Style>
-                                                                    </Image>
-                                                                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                                                        <TextBlock Text="{Binding RoomType}" FontWeight="Bold" FontSize="16"/>
-                                                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
-                                                                        <TextBlock Text="{Binding Capacity, StringFormat='Вместимость: {0} гостей'}" Margin="0,5,0,0"/>
-                                                                        <TextBlock Text="{Binding RoomNumber, StringFormat='Номер комнаты: {0}'}" Margin="0,5,0,0"/>
-                                                                        <TextBlock Text="{Binding BasePrice, StringFormat='Цена за ночь: {0:C}'}" Margin="0,5,0,0"/>
-                                                                        <TextBlock Text="{Binding TotalPrice, StringFormat='Итого за период: {0:C}'}" FontWeight="Bold" Margin="0,5,0,0"/>
-                                                                        <Button Content="Забронировать" Click="BookRoomButton_Click" Margin="0,10,0,0"/>
-                                                                    </StackPanel>
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ListView.ItemTemplate>
-                                                    </ListView>
-                                                </ScrollViewer>
-                                            </TabItem>
+                                        <Grid Grid.Row="3" Margin="0 20 0 0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="300"/>
+                                            </Grid.ColumnDefinitions>
 
-                                            <TabItem Header="Удобства">
-                                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                                    <ListView x:Name="AmenitiesListView" Margin="0 10 0 0">
-                                                        <ListView.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
-                                                                    <CheckBox IsChecked="True" IsEnabled="False" Margin="0 0 5 0"/>
-                                                                    <TextBlock Text="{Binding AmenityName}" VerticalAlignment="Center"/>
-                                                                </StackPanel>
-                                                            </DataTemplate>
-                                                        </ListView.ItemTemplate>
-                                                    </ListView>
-                                                </ScrollViewer>
-                                            </TabItem>
-
-                                            <TabItem Header="Отзывы">
-                                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                                    <ListView x:Name="ReviewsListView" Margin="0 10 0 0">
-                                                        <ListView.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Border Background="#FFF5F5F5" CornerRadius="4" Padding="15" 
-                                                                        BorderBrush="#FFE0E0E0" BorderThickness="1" 
-                                                                        Margin="0 0 0 10">
-                                                                    <StackPanel>
-                                                                        <StackPanel Orientation="Horizontal">
-                                                                            <TextBlock Text="{Binding Rating, StringFormat='{}Оценка: {0}'}" 
-                                                                                       FontWeight="Bold" Margin="0 0 10 0"/>
-                                                                            <TextBlock Text="{Binding ReviewDate, StringFormat='{}Дата: {0:d}'}"/>
+                                            <TabControl Grid.Column="0" Height="300">
+                                                <TabItem Header="Номера">
+                                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                        <ListView x:Name="RoomsListView" Grid.Row="1" Margin="10" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                                            <ListView.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Grid Margin="5">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="150"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <Image Width="150" Height="100" Stretch="UniformToFill">
+                                                                            <Image.Style>
+                                                                                <Style TargetType="Image">
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding RoomImage}" Value="{x:Null}">
+                                                                                            <Setter Property="Source" Value="/Resources/Rooms/default.jpg"/>
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                    <Setter Property="Source" Value="{Binding RoomImage}"/>
+                                                                                </Style>
+                                                                            </Image.Style>
+                                                                        </Image>
+                                                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                                            <TextBlock Text="{Binding RoomType}" FontWeight="Bold" FontSize="16"/>
+                                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
+                                                                            <TextBlock Text="{Binding Capacity, StringFormat='Вместимость: {0} гостей'}" Margin="0,5,0,0"/>
+                                                                            <TextBlock Text="{Binding RoomNumber, StringFormat='Номер комнаты: {0}'}" Margin="0,5,0,0"/>
+                                                                            <TextBlock Text="{Binding BasePrice, StringFormat='Цена за ночь: {0:C}'}" Margin="0,5,0,0"/>
+                                                                            <TextBlock Text="{Binding TotalPrice, StringFormat='Итого за период: {0:C}'}" FontWeight="Bold" Margin="0,5,0,0"/>
+                                                                            <Button Content="Забронировать" Click="BookRoomButton_Click" Margin="0,10,0,0"/>
                                                                         </StackPanel>
-                                                                        <TextBlock Text="{Binding Comment}" Margin="0 5 0 0" TextWrapping="Wrap"/>
+                                                                    </Grid>
+                                                                </DataTemplate>
+                                                            </ListView.ItemTemplate>
+                                                        </ListView>
+                                                    </ScrollViewer>
+                                                </TabItem>
+
+                                                <TabItem Header="Удобства">
+                                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                        <ListView x:Name="AmenitiesListView" Margin="0 10 0 0">
+                                                            <ListView.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                                                        <CheckBox IsChecked="True" IsEnabled="False" Margin="0 0 5 0"/>
+                                                                        <TextBlock Text="{Binding AmenityName}" VerticalAlignment="Center"/>
                                                                     </StackPanel>
-                                                                </Border>
-                                                            </DataTemplate>
-                                                        </ListView.ItemTemplate>
-                                                    </ListView>
-                                                </ScrollViewer>
-                                            </TabItem>
-                                        </TabControl>
+                                                                </DataTemplate>
+                                                            </ListView.ItemTemplate>
+                                                        </ListView>
+                                                    </ScrollViewer>
+                                                </TabItem>
+
+                                                <TabItem Header="Отзывы">
+                                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                        <ListView x:Name="ReviewsListView" Margin="0 10 0 0">
+                                                            <ListView.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border Background="#FFF5F5F5" CornerRadius="4" Padding="15" 
+                                                                            BorderBrush="#FFE0E0E0" BorderThickness="1" 
+                                                                            Margin="0 0 0 10">
+                                                                        <StackPanel>
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="{Binding Rating, StringFormat='{}Оценка: {0}'}" 
+                                                                                           FontWeight="Bold" Margin="0 0 10 0"/>
+                                                                                <TextBlock Text="{Binding ReviewDate, StringFormat='{}Дата: {0:d}'}"/>
+                                                                            </StackPanel>
+                                                                            <TextBlock Text="{Binding Comment}" Margin="0 5 0 0" TextWrapping="Wrap"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </DataTemplate>
+                                                            </ListView.ItemTemplate>
+                                                        </ListView>
+                                                    </ScrollViewer>
+                                                </TabItem>
+                                            </TabControl>
+
+                                            <!-- Дополнительные фильтры -->
+                                            <Border Grid.Column="1" Background="White" CornerRadius="4" Padding="15" 
+                                                    BorderBrush="#FFE0E0E0" BorderThickness="1" Margin="10 0 0 0">
+                                                <StackPanel>
+                                                    <TextBlock Text="Дополнительные фильтры" FontSize="14" FontWeight="SemiBold" Margin="0 0 0 10"/>
+                                                    
+                                                    <StackPanel Margin="0 0 0 10">
+                                                        <TextBlock Text="Категория отеля" FontSize="12" FontWeight="SemiBold"/>
+                                                        <ComboBox x:Name="StarRatingComboBox" Height="30" Margin="0 5 0 0">
+                                                            <ComboBoxItem Content="Любая категория" IsSelected="True"/>
+                                                            <ComboBoxItem Content="1 звезда"/>
+                                                            <ComboBoxItem Content="2 звезды"/>
+                                                            <ComboBoxItem Content="3 звезды"/>
+                                                            <ComboBoxItem Content="4 звезды"/>
+                                                            <ComboBoxItem Content="5 звезд"/>
+                                                        </ComboBox>
+                                                    </StackPanel>
+
+                                                    <StackPanel Margin="0 0 0 10">
+                                                        <TextBlock Text="Тип номера" FontSize="12" FontWeight="SemiBold"/>
+                                                        <ComboBox x:Name="RoomTypeComboBox" DisplayMemberPath="TypeName" 
+                                                                  SelectedValuePath="RoomTypeID" Height="30" Margin="0 5 0 0"
+                                                                  SelectionChanged="RoomTypeComboBox_SelectionChanged"/>
+                                                    </StackPanel>
+
+                                                    <StackPanel Margin="0 0 0 10">
+                                                        <TextBlock Text="Цена за ночь" FontSize="12" FontWeight="SemiBold"/>
+                                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                                            <TextBox x:Name="MinPriceTextBox" Width="70" Height="30" 
+                                                                     Text="0" Margin="0 0 5 0"/>
+                                                            <TextBlock Text="-" VerticalAlignment="Center" Margin="5 0 5 0"/>
+                                                            <TextBox x:Name="MaxPriceTextBox" Width="70" Height="30" 
+                                                                     Text="10000" Margin="5 0 0 0"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+
+                                                    <StackPanel Margin="0 0 0 15">
+                                                        <TextBlock Text="Удобства" FontSize="12" FontWeight="SemiBold"/>
+                                                        <Border Background="White" CornerRadius="4" Padding="5" 
+                                                                BorderBrush="#FFE0E0E0" BorderThickness="1" 
+                                                                Height="100" Margin="0 5 0 0">
+                                                            <ListBox x:Name="AmenitiesListBox" SelectionMode="Multiple" 
+                                                                    BorderThickness="0" Background="Transparent">
+                                                                <ListBox.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <CheckBox Content="{Binding AmenityName}" 
+                                                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                                                  Margin="2"/>
+                                                                    </DataTemplate>
+                                                                </ListBox.ItemTemplate>
+                                                            </ListBox>
+                                                        </Border>
+                                                    </StackPanel>
+
+                                                    <Button Content="Применить фильтры" 
+                                                            Style="{StaticResource MainButtonStyle}" 
+                                                            Height="30" Width="200"
+                                                            HorizontalAlignment="Center"
+                                                            Click="SearchButton_Click"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
 
                                         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 20 0 0">
                                             <Button x:Name="ViewAllHotelsButton" Content="Показать все отели" 

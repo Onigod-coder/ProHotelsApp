@@ -230,8 +230,8 @@
       <LastGenOutput>HotelModel.cs</LastGenOutput>
     </Content>
     <Content Include="ProHotel.sql" />
-    <Resource Include="Resources\Rooms\room__1.jpg" />
-    <Resource Include="Resources\Rooms\room_1.jpg" />
+    <Resource Include="Resources\Rooms\*.jpg" />
+    <Resource Include="Resources\Rooms\*.jpeg" />
     <Resource Include="Resources\Hotels\hotel__1.jpg" />
     <Resource Include="Resources\Hotels\default.jpg" />
     <Resource Include="Resources\Hotels\hotel__10.jpg" />
@@ -258,7 +258,6 @@
     <Resource Include="Resources\Hotels\hotel__7.jpg" />
     <Resource Include="Resources\Hotels\hotel__8.jpg" />
     <Resource Include="Resources\Hotels\hotel__9.jpg" />
-    <Resource Include="Resources\Hotels\*.jpeg" />
     <Resource Include="Resources\Rooms\default.jpg" />
     <Resource Include="Resources\Rooms\room_1.jpg" />
     <Resource Include="Resources\Rooms\room__10.jpg" />
@@ -274,7 +273,6 @@
     <Resource Include="Resources\Rooms\room__7.jpg" />
     <Resource Include="Resources\Rooms\room__8.jpg" />
     <Resource Include="Resources\Rooms\room__9.jpg" />
-    <Resource Include="Resources\Rooms\*.jpeg" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
