@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d3339711ae434b76b35466488822ff9e" Name="Diagram1" ZoomLevel="67">
+        <EntityTypeShape EntityType="ProHotelModel.Admin" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Login" Width="1.5" PointX="3" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Booking" Width="1.5" PointX="5.25" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Discount" Width="1.5" PointX="7.5" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Addresses" Width="1.5" PointX="14.25" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Amenities" Width="1.5" PointX="19.5" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Bookings" Width="1.5" PointX="24" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Cities" Width="1.5" PointX="12" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Countries" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Customers" Width="1.5" PointX="21.75" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Discounts" Width="1.5" PointX="26.25" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Employees" Width="1.5" PointX="18.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Hotels" Width="1.5" PointX="16.5" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Payments" Width="1.5" PointX="26.25" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Reviews" Width="1.5" PointX="26.25" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Rooms" Width="1.5" PointX="21.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.RoomTypes" Width="1.5" PointX="19.5" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Departments" Width="1.5" PointX="3" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Employees1" Width="1.5" PointX="5.25" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Guests" Width="1.5" PointX="3" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Hotel" Width="1.5" PointX="0.75" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.Services" Width="1.5" PointX="3" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProHotelModel.ServicesUsed" Width="1.5" PointX="7.5" PointY="19.25" IsExpanded="true" />
+        <AssociationConnector Association="ProHotelModel.FK_EmployeeId_Login" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_HotelId_login" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_BookingId_ServicesUsed" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_DiscountId_Booking" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_EmployeeId_Booking" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_GuestId_Booking" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_HotelId_Booking" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_EmployeeId_Discount" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Addresses__CityI__3C69FB99" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Hotels__AddressI__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Bookings__Custom__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Bookings__RoomID__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Payments__Bookin__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Reviews__Booking__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Cities__CountryI__398D8EEE" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Employees__Hotel__6477ECF3" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Rooms__HotelID__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK__Rooms__RoomTypeI__46E78A0C" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_DepartmentId_Employee" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_HotelId_dep" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_HotelId_Employee" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_HotelID_Guests" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_HotelId_Services" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.FK_ServiceId_ServicesUsed" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.BookingDiscounts" ManuallyRouted="false" />
+        <AssociationConnector Association="ProHotelModel.RoomAmenities" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
