@@ -681,6 +681,29 @@ namespace HotelsApp
             }
         }
 
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (HotelsListView?.SelectedItem != null)
+            {
+                var checkInDate = CheckInDatePicker.SelectedDate ?? DateTime.Today;
+                var checkOutDate = CheckOutDatePicker.SelectedDate ?? DateTime.Today.AddDays(1);
+
+                if (checkInDate >= checkOutDate)
+                {
+                    return;
+                }
+
+                var rooms = RoomsListView.ItemsSource as List<RoomViewModel>;
+                if (rooms != null)
+                {
+                    foreach (var room in rooms)
+                    {
+                        room.TotalNights = (int)(checkOutDate - checkInDate).TotalDays;
+                    }
+                }
+            }
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);

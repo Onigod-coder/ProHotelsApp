@@ -122,9 +122,9 @@
                         </Grid.RowDefinitions>
 
                         <!-- Панель поиска -->
-                        <Border Grid.Row="0" Background="White" CornerRadius="4" Padding="20" 
+                        <Border Grid.Row="0" Background="White" CornerRadius="4" Padding="15" 
                                 BorderBrush="#FFE0E0E0" BorderThickness="1" 
-                                Margin="0 0 0 20">
+                                Margin="0 0 0 10">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -134,25 +134,27 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0" Margin="0 0 15 0">
-                                    <TextBlock Text="Город" Style="{StaticResource SectionHeaderStyle}"/>
+                                <StackPanel Grid.Column="0" Margin="0 0 10 0">
+                                    <TextBlock Text="Город" FontSize="12" FontWeight="SemiBold"/>
                                     <ComboBox x:Name="CityComboBox" DisplayMemberPath="CityName" 
-                                              SelectedValuePath="CityID" Height="35" Margin="0 5 0 0"/>
+                                              SelectedValuePath="CityID" Height="30" Margin="0 5 0 0"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="1" Margin="0 0 15 0">
-                                    <TextBlock Text="Дата заезда" Style="{StaticResource SectionHeaderStyle}"/>
-                                    <DatePicker x:Name="CheckInDatePicker" Height="35" Margin="0 5 0 0"/>
+                                <StackPanel Grid.Column="1" Margin="0 0 10 0">
+                                    <TextBlock Text="Дата заезда" FontSize="12" FontWeight="SemiBold"/>
+                                    <DatePicker x:Name="CheckInDatePicker" Height="30" Margin="0 5 0 0" 
+                                               SelectedDateChanged="DatePicker_SelectedDateChanged"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="2" Margin="0 0 15 0">
-                                    <TextBlock Text="Дата выезда" Style="{StaticResource SectionHeaderStyle}"/>
-                                    <DatePicker x:Name="CheckOutDatePicker" Height="35" Margin="0 5 0 0"/>
+                                <StackPanel Grid.Column="2" Margin="0 0 10 0">
+                                    <TextBlock Text="Дата выезда" FontSize="12" FontWeight="SemiBold"/>
+                                    <DatePicker x:Name="CheckOutDatePicker" Height="30" Margin="0 5 0 0" 
+                                               SelectedDateChanged="DatePicker_SelectedDateChanged"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="3" Margin="0 0 15 0">
-                                    <TextBlock Text="Количество гостей" Style="{StaticResource SectionHeaderStyle}"/>
-                                    <ComboBox x:Name="GuestsComboBox" Height="35" Margin="0 5 0 0"
+                                <StackPanel Grid.Column="3" Margin="0 0 10 0">
+                                    <TextBlock Text="Количество гостей" FontSize="12" FontWeight="SemiBold"/>
+                                    <ComboBox x:Name="GuestsComboBox" Height="30" Margin="0 5 0 0"
                                               SelectionChanged="GuestsComboBox_SelectionChanged">
                                         <ComboBoxItem Content="1 гость" IsSelected="True"/>
                                         <ComboBoxItem Content="2 гостя"/>
@@ -164,15 +166,15 @@
 
                                 <Button Grid.Column="4" Content="Найти" 
                                         Style="{StaticResource MainButtonStyle}" 
-                                        VerticalAlignment="Bottom" Height="35" Width="120"
+                                        VerticalAlignment="Bottom" Height="30" Width="100"
                                         Margin="0 0 0 5"
                                         Click="SearchButton_Click"/>
                             </Grid>
                         </Border>
 
                         <!-- Фильтры -->
-                        <Expander Grid.Row="1" Header="Дополнительные фильтры" Margin="0 0 0 20" IsExpanded="False">
-                            <Border Background="White" CornerRadius="4" Padding="20" 
+                        <Expander Grid.Row="1" Header="Дополнительные фильтры" Margin="0 0 0 10" IsExpanded="False">
+                            <Border Background="White" CornerRadius="4" Padding="15" 
                                     BorderBrush="#FFE0E0E0" BorderThickness="1">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -182,9 +184,9 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <StackPanel Grid.Column="0" Margin="0 0 15 0">
-                                        <TextBlock Text="Категория отеля" Style="{StaticResource SectionHeaderStyle}"/>
-                                        <ComboBox x:Name="StarRatingComboBox" Height="35" Margin="0 5 0 0">
+                                    <StackPanel Grid.Column="0" Margin="0 0 10 0">
+                                        <TextBlock Text="Категория отеля" FontSize="12" FontWeight="SemiBold"/>
+                                        <ComboBox x:Name="StarRatingComboBox" Height="30" Margin="0 5 0 0">
                                             <ComboBoxItem Content="Любая категория" IsSelected="True"/>
                                             <ComboBoxItem Content="1 звезда"/>
                                             <ComboBoxItem Content="2 звезды"/>
@@ -194,29 +196,29 @@
                                         </ComboBox>
                                     </StackPanel>
 
-                                    <StackPanel Grid.Column="1" Margin="0 0 15 0">
-                                        <TextBlock Text="Тип номера" Style="{StaticResource SectionHeaderStyle}"/>
+                                    <StackPanel Grid.Column="1" Margin="0 0 10 0">
+                                        <TextBlock Text="Тип номера" FontSize="12" FontWeight="SemiBold"/>
                                         <ComboBox x:Name="RoomTypeComboBox" DisplayMemberPath="TypeName" 
-                                                  SelectedValuePath="RoomTypeID" Height="35" Margin="0 5 0 0"
+                                                  SelectedValuePath="RoomTypeID" Height="30" Margin="0 5 0 0"
                                                   SelectionChanged="RoomTypeComboBox_SelectionChanged"/>
                                     </StackPanel>
 
-                                    <StackPanel Grid.Column="2" Margin="0 0 15 0">
-                                        <TextBlock Text="Цена за ночь" Style="{StaticResource SectionHeaderStyle}"/>
+                                    <StackPanel Grid.Column="2" Margin="0 0 10 0">
+                                        <TextBlock Text="Цена за ночь" FontSize="12" FontWeight="SemiBold"/>
                                         <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                            <TextBox x:Name="MinPriceTextBox" Width="80" Height="35" 
+                                            <TextBox x:Name="MinPriceTextBox" Width="70" Height="30" 
                                                      Text="0" Margin="0 0 5 0"/>
                                             <TextBlock Text="-" VerticalAlignment="Center" Margin="5 0 5 0"/>
-                                            <TextBox x:Name="MaxPriceTextBox" Width="80" Height="35" 
+                                            <TextBox x:Name="MaxPriceTextBox" Width="70" Height="30" 
                                                      Text="10000" Margin="5 0 0 0"/>
                                         </StackPanel>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="3">
-                                        <TextBlock Text="Удобства" Style="{StaticResource SectionHeaderStyle}"/>
+                                        <TextBlock Text="Удобства" FontSize="12" FontWeight="SemiBold"/>
                                         <Border Background="White" CornerRadius="4" Padding="5" 
                                                 BorderBrush="#FFE0E0E0" BorderThickness="1" 
-                                                Height="150" Margin="0 5 0 0">
+                                                Height="100" Margin="0 5 0 0">
                                             <ListBox x:Name="AmenitiesListBox" SelectionMode="Multiple" 
                                                     BorderThickness="0" Background="Transparent">
                                                 <ListBox.ItemTemplate>
@@ -253,7 +255,7 @@
                                                         <ColumnDefinition Width="120"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Image Source="{Binding HotelImage}" Width="120" Height="80" Stretch="UniformToFill">
+                                                    <Image Width="120" Height="80" Stretch="UniformToFill">
                                                         <Image.Style>
                                                             <Style TargetType="Image">
                                                                 <Style.Triggers>
@@ -261,6 +263,7 @@
                                                                         <Setter Property="Source" Value="/Resources/Hotels/default.jpg"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
+                                                                <Setter Property="Source" Value="{Binding HotelImage}"/>
                                                             </Style>
                                                         </Image.Style>
                                                     </Image>
@@ -310,7 +313,7 @@
                                                                         <ColumnDefinition Width="150"/>
                                                                         <ColumnDefinition Width="*"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                    <Image Source="{Binding RoomImage}" Width="150" Height="100" Stretch="UniformToFill">
+                                                                    <Image Width="150" Height="100" Stretch="UniformToFill">
                                                                         <Image.Style>
                                                                             <Style TargetType="Image">
                                                                                 <Style.Triggers>
@@ -318,6 +321,7 @@
                                                                                         <Setter Property="Source" Value="/Resources/Rooms/default.jpg"/>
                                                                                     </DataTrigger>
                                                                                 </Style.Triggers>
+                                                                                <Setter Property="Source" Value="{Binding RoomImage}"/>
                                                                             </Style>
                                                                         </Image.Style>
                                                                     </Image>

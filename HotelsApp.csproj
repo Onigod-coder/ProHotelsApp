@@ -230,9 +230,50 @@
       <LastGenOutput>HotelModel.cs</LastGenOutput>
     </Content>
     <Content Include="ProHotel.sql" />
-    <Resource Include="Resources\Hotels\*.jpg" />
+    <Resource Include="Resources\Rooms\room__1.jpg" />
+    <Resource Include="Resources\Rooms\room_1.jpg" />
+    <Resource Include="Resources\Hotels\hotel__1.jpg" />
+    <Resource Include="Resources\Hotels\default.jpg" />
+    <Resource Include="Resources\Hotels\hotel__10.jpg" />
+    <Resource Include="Resources\Hotels\hotel__11.jpg" />
+    <Resource Include="Resources\Hotels\hotel__12.jpg" />
+    <Resource Include="Resources\Hotels\hotel__13.jpg" />
+    <Resource Include="Resources\Hotels\hotel__14.jpg" />
+    <Resource Include="Resources\Hotels\hotel__15.jpg" />
+    <Resource Include="Resources\Hotels\hotel__16.jpg" />
+    <Resource Include="Resources\Hotels\hotel__17.jpg" />
+    <Resource Include="Resources\Hotels\hotel__18.jpg" />
+    <Resource Include="Resources\Hotels\hotel__19.jpg" />
+    <Resource Include="Resources\Hotels\hotel__2.jpg" />
+    <Resource Include="Resources\Hotels\hotel__20.jpg" />
+    <Resource Include="Resources\Hotels\hotel__21.jpg" />
+    <Resource Include="Resources\Hotels\hotel__22.jpg" />
+    <Resource Include="Resources\Hotels\hotel__23.jpg" />
+    <Resource Include="Resources\Hotels\hotel__24.jpg" />
+    <Resource Include="Resources\Hotels\hotel__25.jpg" />
+    <Resource Include="Resources\Hotels\hotel__3.jpg" />
+    <Resource Include="Resources\Hotels\hotel__4.jpg" />
+    <Resource Include="Resources\Hotels\hotel__5.jpg" />
+    <Resource Include="Resources\Hotels\hotel__6.jpg" />
+    <Resource Include="Resources\Hotels\hotel__7.jpg" />
+    <Resource Include="Resources\Hotels\hotel__8.jpg" />
+    <Resource Include="Resources\Hotels\hotel__9.jpg" />
     <Resource Include="Resources\Hotels\*.jpeg" />
-    <Resource Include="Resources\Rooms\*.jpg" />
+    <Resource Include="Resources\Rooms\default.jpg" />
+    <Resource Include="Resources\Rooms\room_1.jpg" />
+    <Resource Include="Resources\Rooms\room__10.jpg" />
+    <Resource Include="Resources\Rooms\room__11.jpg" />
+    <Resource Include="Resources\Rooms\room__12.jpg" />
+    <Resource Include="Resources\Rooms\room__13.jpg" />
+    <Resource Include="Resources\Rooms\room__14.jpg" />
+    <Resource Include="Resources\Rooms\room__2.jpg" />
+    <Resource Include="Resources\Rooms\room__3.jpg" />
+    <Resource Include="Resources\Rooms\room__4.jpg" />
+    <Resource Include="Resources\Rooms\room__5.jpg" />
+    <Resource Include="Resources\Rooms\room__6.jpg" />
+    <Resource Include="Resources\Rooms\room__7.jpg" />
+    <Resource Include="Resources\Rooms\room__8.jpg" />
+    <Resource Include="Resources\Rooms\room__9.jpg" />
     <Resource Include="Resources\Rooms\*.jpeg" />
   </ItemGroup>
   <ItemGroup>
