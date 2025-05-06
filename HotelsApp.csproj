@@ -87,16 +87,9 @@
     <Compile Include="AddReviewWindow.xaml.cs">
       <DependentUpon>AddReviewWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\Admin.cs" />
-    <Compile Include="Model\Booking.cs" />
-    <Compile Include="Model\Departments.cs" />
-    <Compile Include="Model\Discount.cs" />
-    <Compile Include="Model\Employees1.cs" />
-    <Compile Include="Model\Guests.cs" />
-    <Compile Include="Model\Hotel.cs" />
-    <Compile Include="Model\Login.cs" />
-    <Compile Include="Model\Services.cs" />
-    <Compile Include="Model\ServicesUsed.cs" />
+    <Compile Include="Model\Admin.cs">
+      <DependentUpon>HotelModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RegisterWindow.xaml.cs">
       <DependentUpon>RegisterWindow.xaml</DependentUpon>
     </Compile>

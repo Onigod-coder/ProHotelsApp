@@ -26,9 +26,6 @@ namespace HotelsApp.Model
         }
     
         public virtual DbSet<Admin> Admin { get; set; }
-        public virtual DbSet<Login> Login { get; set; }
-        public virtual DbSet<Booking> Booking { get; set; }
-        public virtual DbSet<Discount> Discount { get; set; }
         public virtual DbSet<Addresses> Addresses { get; set; }
         public virtual DbSet<Amenities> Amenities { get; set; }
         public virtual DbSet<Bookings> Bookings { get; set; }
@@ -42,11 +39,5 @@ namespace HotelsApp.Model
         public virtual DbSet<Reviews> Reviews { get; set; }
         public virtual DbSet<Rooms> Rooms { get; set; }
         public virtual DbSet<RoomTypes> RoomTypes { get; set; }
-        public virtual DbSet<Departments> Departments { get; set; }
-        public virtual DbSet<Employees1> Employees1 { get; set; }
-        public virtual DbSet<Guests> Guests { get; set; }
-        public virtual DbSet<Hotel> Hotel { get; set; }
-        public virtual DbSet<Services> Services { get; set; }
-        public virtual DbSet<ServicesUsed> ServicesUsed { get; set; }
     }
 }
