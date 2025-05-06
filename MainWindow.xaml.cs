@@ -617,38 +617,58 @@ namespace HotelsApp
 
             try
             {
-                if (MessageBox.Show($"Вы уверены, что хотите забронировать номер?\n\n" +
-                                  $"Отель: {selectedHotel.HotelName}\n" +
-                                  $"Номер: {selectedRoom.RoomNumber}\n" +
-                                  $"Тип номера: {selectedRoom.RoomTypes.TypeName}\n" +
-                                  $"Даты: {checkInDate.Value:d} - {checkOutDate.Value:d}\n" +
-                                  $"Количество ночей: {roomViewModel.TotalNights}\n" +
-                                  $"Цена за ночь: ${selectedRoom.RoomTypes.BasePrice:N2}\n" +
-                                  $"Итого к оплате: ${roomViewModel.TotalPrice:N2}",
-                                  "Подтверждение бронирования",
-                                  MessageBoxButton.YesNo,
-                                  MessageBoxImage.Question) == MessageBoxResult.Yes)
+                // Проверяем, нет ли уже забронированных дат
+                using (var context = new ProHotelEntities())
                 {
-                    var booking = new Bookings
+                    var existingBookings = context.Bookings
+                        .Where(b => b.RoomID == selectedRoom.RoomID &&
+                                  (b.Status == "Confirmed" || b.Status == "Paid") &&
+                                  ((b.CheckInDate <= checkInDate && b.CheckOutDate > checkInDate) ||
+                                   (b.CheckInDate < checkOutDate && b.CheckOutDate >= checkOutDate) ||
+                                   (b.CheckInDate >= checkInDate && b.CheckOutDate <= checkOutDate)))
+                        .ToList();
+
+                    if (existingBookings.Any())
                     {
-                        CustomerID = currentUser.CustomerID,
-                        RoomID = selectedRoom.RoomID,
-                        BookingDate = DateTime.Now,
-                        CheckInDate = checkInDate.Value,
-                        CheckOutDate = checkOutDate.Value,
-                        TotalPrice = roomViewModel.TotalPrice,
-                        Status = "Confirmed"
-                    };
+                        var overlappingBooking = existingBookings.First();
+                        MessageBox.Show($"Номер уже забронирован на даты {overlappingBooking.CheckInDate:d} - {overlappingBooking.CheckOutDate:d}.\n" +
+                                      "Пожалуйста, выберите другие даты.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
 
-                    dbContext.Bookings.Add(booking);
-                    dbContext.SaveChanges();
+                    if (MessageBox.Show($"Вы уверены, что хотите забронировать номер?\n\n" +
+                                      $"Отель: {selectedHotel.HotelName}\n" +
+                                      $"Номер: {selectedRoom.RoomNumber}\n" +
+                                      $"Тип номера: {selectedRoom.RoomTypes.TypeName}\n" +
+                                      $"Даты: {checkInDate.Value:d} - {checkOutDate.Value:d}\n" +
+                                      $"Количество ночей: {roomViewModel.TotalNights}\n" +
+                                      $"Цена за ночь: ${selectedRoom.RoomTypes.BasePrice:N2}\n" +
+                                      $"Итого к оплате: ${roomViewModel.TotalPrice:N2}",
+                                      "Подтверждение бронирования",
+                                      MessageBoxButton.YesNo,
+                                      MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        var booking = new Bookings
+                        {
+                            CustomerID = currentUser.CustomerID,
+                            RoomID = selectedRoom.RoomID,
+                            BookingDate = DateTime.Now,
+                            CheckInDate = checkInDate.Value,
+                            CheckOutDate = checkOutDate.Value,
+                            TotalPrice = roomViewModel.TotalPrice,
+                            Status = "Confirmed"
+                        };
 
-                    MessageBox.Show($"Номер успешно забронирован! Сумма к оплате: ${roomViewModel.TotalPrice:N2}",
-                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                        dbContext.Bookings.Add(booking);
+                        dbContext.SaveChanges();
 
-                    LoadUserBookings();
-                    UpdateProfileInfo(currentUser);
-                    HotelsListView_SelectionChanged(null, null);
+                        MessageBox.Show($"Номер успешно забронирован! Сумма к оплате: ${roomViewModel.TotalPrice:N2}",
+                            "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        LoadUserBookings();
+                        UpdateProfileInfo(currentUser);
+                        HotelsListView_SelectionChanged(null, null);
+                    }
                 }
             }
             catch (Exception ex)
@@ -850,7 +870,7 @@ namespace HotelsApp
                                   $"Отель: {booking.Rooms.Hotels.HotelName}\n" +
                                   $"Номер: {booking.Rooms.RoomNumber}\n" +
                                   $"Даты: {booking.CheckInDate:d} - {booking.CheckOutDate:d}\n" +
-                                  $"Сумма к оплате: {booking.TotalPrice:C}",
+                                  $"Сумма к оплате: ${booking.TotalPrice:N2}",
                                   "Подтверждение оплаты",
                                   MessageBoxButton.YesNo,
                                   MessageBoxImage.Question) == MessageBoxResult.Yes)
