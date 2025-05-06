@@ -9,6 +9,16 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Data.Entity;
 using System.Windows.Media.Animation;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
+using PdfFont = iTextSharp.text.Font;
+using DrawingFont = System.Drawing.Font;
+using PdfImage = iTextSharp.text.Image;
+using DrawingImage = System.Drawing.Image;
 
 namespace HotelsApp
 {
@@ -46,6 +56,23 @@ namespace HotelsApp
             if (value is string status)
             {
                 return status == "Confirmed" ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PaidStatusToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string status)
+            {
+                return status == "Paid" ? Visibility.Visible : Visibility.Collapsed;
             }
             return Visibility.Collapsed;
         }
@@ -128,15 +155,25 @@ namespace HotelsApp
 
         public MainWindow()
         {
-            InitializeComponent();
-            InitializeApplication();
+            try
+            {
+                InitializeComponent();
+                dbContext = new ProHotelEntities();
+                dbContext.Database.Connection.Open(); // Явно открываем соединение
+                InitializeApplication();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при инициализации приложения: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
         }
 
         private void InitializeApplication()
         {
             try
             {
-                dbContext = new ProHotelEntities();
                 LoadInitialData();
                 UpdateUserInterface();
             }
@@ -153,27 +190,25 @@ namespace HotelsApp
             try
             {
                 // Загрузка отелей
-                var hotels = dbContext.Hotels.ToList();
-                foreach (var hotel in hotels)
-                {
-                    hotel.HotelImage = $"/Resources/Hotels/hotel__{hotel.HotelID}.jpg";
-                }
-                HotelsListView.ItemsSource = hotels;
+                HotelsListView.ItemsSource = null;
 
                 // Загрузка типов комнат
                 var roomTypes = dbContext.RoomTypes.ToList();
-                RoomTypeComboBox.ItemsSource = roomTypes;
+                var allRoomTypes = new List<RoomTypes> { new RoomTypes { RoomTypeID = 0, TypeName = "Все типы номеров" } };
+                allRoomTypes.AddRange(roomTypes);
+                RoomTypeComboBox.ItemsSource = allRoomTypes;
                 RoomTypeComboBox.DisplayMemberPath = "TypeName";
                 RoomTypeComboBox.SelectedIndex = 0;
 
                 // Загрузка городов
                 var cities = dbContext.Addresses.Select(a => a.Cities).Distinct().ToList();
                 CityComboBox.ItemsSource = cities;
-                CityComboBox.SelectedIndex = 0;
+                CityComboBox.SelectedIndex = -1;
                 CityComboBox.SelectionChanged += CityComboBox_SelectionChanged;
 
                 // Загрузка количества гостей
                 GuestsComboBox.Items.Clear();
+                GuestsComboBox.Items.Add(new ComboBoxItem { Content = "Выберите количество" });
                 GuestsComboBox.Items.Add(new ComboBoxItem { Content = "1 гость" });
                 GuestsComboBox.Items.Add(new ComboBoxItem { Content = "2 гостя" });
                 GuestsComboBox.Items.Add(new ComboBoxItem { Content = "3 гостя" });
@@ -181,13 +216,23 @@ namespace HotelsApp
                 GuestsComboBox.Items.Add(new ComboBoxItem { Content = "5+ гостей" });
                 GuestsComboBox.SelectedIndex = 0;
 
+                // Инициализация сортировки
+                SortComboBox.Items.Clear();
+                SortComboBox.Items.Add(new ComboBoxItem { Content = "Без сортировки" });
+                SortComboBox.Items.Add(new ComboBoxItem { Content = "По номеру (А-Я)" });
+                SortComboBox.Items.Add(new ComboBoxItem { Content = "По номеру (Я-А)" });
+                SortComboBox.Items.Add(new ComboBoxItem { Content = "По цене (возрастание)" });
+                SortComboBox.Items.Add(new ComboBoxItem { Content = "По цене (убывание)" });
+                SortComboBox.SelectedIndex = 0;
+                SortComboBox.SelectionChanged += (s, e) => HotelsListView_SelectionChanged(null, null);
+
                 // Загрузка дат
                 CheckInDatePicker.SelectedDate = DateTime.Today;
                 CheckOutDatePicker.SelectedDate = DateTime.Today.AddDays(1);
 
                 var amenities = dbContext.Amenities.ToList();
                 amenityViewModels = amenities.Select(a => new AmenityViewModel { Amenity = a }).ToList();
-                AmenitiesListBox.ItemsSource = amenityViewModels;
+                FilterAmenitiesListBox.ItemsSource = amenityViewModels;
 
                 // Инициализация значений фильтров
                 StarRatingComboBox.SelectedIndex = 0;
@@ -197,6 +242,7 @@ namespace HotelsApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
             }
         }
 
@@ -293,6 +339,18 @@ namespace HotelsApp
                     return;
                 }
 
+                // Парсим минимальную и максимальную цену
+                decimal minPrice = 0;
+                decimal maxPrice = decimal.MaxValue;
+                if (decimal.TryParse(MinPriceTextBox.Text, out decimal minPriceValue))
+                {
+                    minPrice = minPriceValue;
+                }
+                if (decimal.TryParse(MaxPriceTextBox.Text, out decimal maxPriceValue))
+                {
+                    maxPrice = maxPriceValue;
+                }
+
                 var hotels = dbContext.Hotels
                     .Where(h => h.Addresses.CityID == selectedCity.CityID);
 
@@ -302,7 +360,7 @@ namespace HotelsApp
                     hotels = hotels.Where(h => h.StarRating == selectedStarRating);
                 }
 
-                if (selectedRoomType != null)
+                if (selectedRoomType != null && selectedRoomType.RoomTypeID != 0)
                 {
                     hotels = hotels.Where(h => h.Rooms.Any(r => r.RoomTypeID == selectedRoomType.RoomTypeID && r.IsAvailable == true));
                 }
@@ -325,6 +383,13 @@ namespace HotelsApp
                         r.RoomTypes.Capacity >= guestsCount && r.IsAvailable == true));
                 }
 
+                // Фильтрация по цене
+                hotels = hotels.Where(h => h.Rooms.Any(r => 
+                    r.RoomTypes.BasePrice >= minPrice && 
+                    r.RoomTypes.BasePrice <= maxPrice && 
+                    r.IsAvailable == true));
+
+                // Фильтрация по удобствам
                 var selectedAmenities = amenityViewModels
                     .Where(a => a.IsSelected)
                     .Select(a => a.AmenityID)
@@ -337,11 +402,94 @@ namespace HotelsApp
                 }
 
                 var filteredHotels = hotels.ToList();
+                
+                // Устанавливаем пути к изображениям для отфильтрованных отелей
+                foreach (var hotel in filteredHotels)
+                {
+                    hotel.HotelImage = $"/Resources/Hotels/hotel__{hotel.HotelID}.jpg";
+                }
+
+                HotelsListView.ItemsSource = null;
                 HotelsListView.ItemsSource = filteredHotels;
 
                 if (filteredHotels.Any())
                 {
                     HotelsListView.SelectedIndex = 0;
+                    // Обновляем список комнат для выбранного отеля
+                    var selectedHotel = HotelsListView.SelectedItem as Hotels;
+                    if (selectedHotel != null)
+                    {
+                        using (var context = new ProHotelEntities())
+                        {
+                            var availableRooms = context.Rooms
+                                .Where(r => r.HotelID == selectedHotel.HotelID)
+                                .Where(r => r.RoomTypes.BasePrice >= minPrice && r.RoomTypes.BasePrice <= maxPrice);
+
+                            if (selectedRoomType != null && selectedRoomType.RoomTypeID != 0)
+                            {
+                                availableRooms = availableRooms.Where(r => r.RoomTypeID == selectedRoomType.RoomTypeID);
+                            }
+
+                            if (selectedGuests != null)
+                            {
+                                int guestsCount = 1;
+                                string guestsText = selectedGuests.Content.ToString();
+                                if (guestsText.Contains("5+"))
+                                {
+                                    guestsCount = 5;
+                                }
+                                else
+                                {
+                                    int.TryParse(guestsText.Split(' ')[0], out guestsCount);
+                                }
+                                availableRooms = availableRooms.Where(r => r.RoomTypes.Capacity >= guestsCount);
+                            }
+
+                            if (selectedAmenities.Any())
+                            {
+                                availableRooms = availableRooms.Where(r => r.Amenities.Any(a => selectedAmenities.Contains(a.AmenityID)));
+                            }
+
+                            availableRooms = availableRooms.Where(r => !context.Bookings.Any(b => 
+                                b.RoomID == r.RoomID && 
+                                b.Status == "Confirmed" && 
+                                ((b.CheckInDate <= checkInDate && b.CheckOutDate > checkInDate) ||
+                                 (b.CheckInDate < checkOutDate && b.CheckOutDate >= checkOutDate) ||
+                                 (b.CheckInDate >= checkInDate && b.CheckOutDate <= checkOutDate))));
+
+                            var roomsList = availableRooms.ToList();
+                            var roomViewModels = roomsList.Select(r => new RoomViewModel
+                            {
+                                Room = r,
+                                TotalNights = (int)(checkOutDate.Value - checkInDate.Value).TotalDays
+                            }).ToList();
+
+                            // Применяем сортировку
+                            if (SortComboBox != null)
+                            {
+                                switch (SortComboBox.SelectedIndex)
+                                {
+                                    case 1: // По номеру (А-Я)
+                                        roomViewModels = roomViewModels.OrderBy(r => r.RoomNumber).ToList();
+                                        break;
+                                    case 2: // По номеру (Я-А)
+                                        roomViewModels = roomViewModels.OrderByDescending(r => r.RoomNumber).ToList();
+                                        break;
+                                    case 3: // По цене (возрастание)
+                                        roomViewModels = roomViewModels.OrderBy(r => r.BasePrice).ToList();
+                                        break;
+                                    case 4: // По цене (убывание)
+                                        roomViewModels = roomViewModels.OrderByDescending(r => r.BasePrice).ToList();
+                                        break;
+                                    default: // Без сортировки
+                                        break;
+                                }
+                            }
+
+                            RoomsListView.ItemsSource = null;
+                            RoomsListView.ItemsSource = roomViewModels;
+                        }
+                    }
                 }
                 else
                 {
@@ -359,59 +507,86 @@ namespace HotelsApp
             var selectedHotel = HotelsListView.SelectedItem as Hotels;
             if (selectedHotel != null)
             {
-                var selectedRoomType = RoomTypeComboBox.SelectedItem as RoomTypes;
-                var selectedGuestItem = GuestsComboBox.SelectedItem as ComboBoxItem;
-                int selectedGuestCount = 1;
-                
-                if (selectedGuestItem != null)
+                using (var context = new ProHotelEntities())
                 {
-                    string guestText = selectedGuestItem.Content.ToString();
-                    if (guestText.Contains("5+"))
+                    var selectedRoomType = RoomTypeComboBox.SelectedItem as RoomTypes;
+                    var selectedGuestItem = GuestsComboBox.SelectedItem as ComboBoxItem;
+                    int selectedGuestCount = 1;
+                    
+                    if (selectedGuestItem != null)
                     {
-                        selectedGuestCount = 5;
+                        string guestText = selectedGuestItem.Content.ToString();
+                        if (guestText.Contains("5+"))
+                        {
+                            selectedGuestCount = 5;
+                        }
+                        else
+                        {
+                            int.TryParse(guestText.Split(' ')[0], out selectedGuestCount);
+                        }
                     }
-                    else
+
+                    var checkInDate = CheckInDatePicker.SelectedDate ?? DateTime.Today;
+                    var checkOutDate = CheckOutDatePicker.SelectedDate ?? DateTime.Today.AddDays(1);
+
+                    var availableRooms = context.Rooms
+                        .Where(r => r.HotelID == selectedHotel.HotelID)
+                        .Where(r => r.RoomTypes.Capacity >= selectedGuestCount);
+
+                    if (selectedRoomType != null && selectedRoomType.RoomTypeID != 0)
                     {
-                        int.TryParse(guestText.Split(' ')[0], out selectedGuestCount);
+                        availableRooms = availableRooms.Where(r => r.RoomTypeID == selectedRoomType.RoomTypeID);
                     }
+
+                    availableRooms = availableRooms.Where(r => !context.Bookings.Any(b => 
+                        b.RoomID == r.RoomID && 
+                        b.Status == "Confirmed" && 
+                        ((b.CheckInDate <= checkInDate && b.CheckOutDate > checkInDate) ||
+                         (b.CheckInDate < checkOutDate && b.CheckOutDate >= checkOutDate) ||
+                         (b.CheckInDate >= checkInDate && b.CheckOutDate <= checkOutDate))));
+
+                    var roomsList = availableRooms.ToList();
+                    var roomViewModels = roomsList.Select(r => new RoomViewModel
+                    {
+                        Room = r,
+                        TotalNights = (int)(checkOutDate - checkInDate).TotalDays
+                    }).ToList();
+
+                    // Применяем сортировку
+                    if (SortComboBox != null)
+                    {
+                        switch (SortComboBox.SelectedIndex)
+                        {
+                            case 1: // По номеру (А-Я)
+                                roomViewModels = roomViewModels.OrderBy(r => r.RoomNumber).ToList();
+                                break;
+                            case 2: // По номеру (Я-А)
+                                roomViewModels = roomViewModels.OrderByDescending(r => r.RoomNumber).ToList();
+                                break;
+                            case 3: // По цене (возрастание)
+                                roomViewModels = roomViewModels.OrderBy(r => r.BasePrice).ToList();
+                                break;
+                            case 4: // По цене (убывание)
+                                roomViewModels = roomViewModels.OrderByDescending(r => r.BasePrice).ToList();
+                                break;
+                            default: // Без сортировки
+                                break;
+                        }
+                    }
+
+                    RoomsListView.ItemsSource = null;
+                    RoomsListView.ItemsSource = roomViewModels;
+
+                    AmenitiesListView.ItemsSource = context.Amenities
+                        .Where(a => a.Rooms.Any(r => r.HotelID == selectedHotel.HotelID))
+                        .Distinct()
+                        .ToList();
+
+                    ReviewsListView.ItemsSource = context.Reviews
+                        .Where(r => r.Bookings.Rooms.HotelID == selectedHotel.HotelID)
+                        .OrderByDescending(r => r.ReviewDate)
+                        .ToList();
                 }
-
-                var checkInDate = CheckInDatePicker.SelectedDate ?? DateTime.Today;
-                var checkOutDate = CheckOutDatePicker.SelectedDate ?? DateTime.Today.AddDays(1);
-
-                var availableRooms = dbContext.Rooms
-                    .Where(r => r.HotelID == selectedHotel.HotelID)
-                    .Where(r => r.RoomTypes.Capacity >= selectedGuestCount);
-
-                if (selectedRoomType != null)
-                {
-                    availableRooms = availableRooms.Where(r => r.RoomTypeID == selectedRoomType.RoomTypeID);
-                }
-
-                availableRooms = availableRooms.Where(r => !dbContext.Bookings.Any(b => 
-                    b.RoomID == r.RoomID && 
-                    b.Status == "Confirmed" && 
-                    ((b.CheckInDate <= checkInDate && b.CheckOutDate > checkInDate) ||
-                     (b.CheckInDate < checkOutDate && b.CheckOutDate >= checkOutDate) ||
-                     (b.CheckInDate >= checkInDate && b.CheckOutDate <= checkOutDate))));
-
-                var roomsList = availableRooms.ToList();
-                var roomViewModels = roomsList.Select(r => new RoomViewModel
-                {
-                    Room = r,
-                    TotalNights = (int)(checkOutDate - checkInDate).TotalDays
-                }).ToList();
-
-                RoomsListView.ItemsSource = roomViewModels;
-                AmenitiesListView.ItemsSource = dbContext.Amenities
-                    .Where(a => a.Rooms.Any(r => r.HotelID == selectedHotel.HotelID))
-                    .Distinct()
-                    .ToList();
-
-                ReviewsListView.ItemsSource = dbContext.Reviews
-                    .Where(r => r.Bookings.Rooms.HotelID == selectedHotel.HotelID)
-                    .OrderByDescending(r => r.ReviewDate)
-                    .ToList();
             }
             else
             {
@@ -591,7 +766,16 @@ namespace HotelsApp
                     return;
                 }
 
-                HotelsListView.ItemsSource = dbContext.Hotels.ToList();
+                using (var context = new ProHotelEntities())
+                {
+                    var hotels = context.Hotels.ToList();
+                    foreach (var hotel in hotels)
+                    {
+                        hotel.HotelImage = $"/Resources/Hotels/hotel__{hotel.HotelID}.jpg";
+                    }
+                    HotelsListView.ItemsSource = null;
+                    HotelsListView.ItemsSource = hotels;
+                }
             }
             catch (Exception ex)
             {
@@ -712,16 +896,174 @@ namespace HotelsApp
 
         private void CityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (HotelsListView?.SelectedItem != null)
+            try
             {
-                HotelsListView_SelectionChanged(null, null);
+                var selectedCity = CityComboBox.SelectedItem as Cities;
+                if (selectedCity != null)
+                {
+                    using (var context = new ProHotelEntities())
+                    {
+                        var hotels = context.Hotels
+                            .Where(h => h.Addresses.CityID == selectedCity.CityID)
+                            .ToList();
+
+                        foreach (var hotel in hotels)
+                        {
+                            hotel.HotelImage = $"/Resources/Hotels/hotel__{hotel.HotelID}.jpg";
+                        }
+
+                        HotelsListView.ItemsSource = null;
+                        HotelsListView.ItemsSource = hotels;
+
+                        // Обновляем список комнат только если есть выбранный отель
+                        if (HotelsListView.SelectedItem != null)
+                        {
+                            HotelsListView_SelectionChanged(null, null);
+                        }
+                    }
+                }
+                else
+                {
+                    HotelsListView.ItemsSource = null;
+                    RoomsListView.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке отелей: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void DownloadReceiptButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var button = (Button)sender;
+                var bookingViewModel = (BookingViewModel)button.DataContext;
+                var booking = bookingViewModel.Booking;
+
+                if (booking == null || booking.Status != "Paid") return;
+
+                // Создаем диалог сохранения файла
+                var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    FileName = $"Чек_бронирования_{booking.BookingID}.pdf",
+                    DefaultExt = ".pdf",
+                    Filter = "PDF документы (.pdf)|*.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Регистрируем шрифт с поддержкой кириллицы
+                    string fontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Fonts", "arial.ttf");
+                    BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+                    // Создаем QR-код
+                    string qrContent = $"Бронирование #{booking.BookingID}\n" +
+                                     $"Отель: {booking.Rooms.Hotels.HotelName}\n" +
+                                     $"Номер: {booking.Rooms.RoomNumber}\n" +
+                                     $"Даты: {booking.CheckInDate:d} - {booking.CheckOutDate:d}\n" +
+                                     $"Сумма: {booking.TotalPrice:C}";
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrContent, QRCodeGenerator.ECCLevel.Q);
+                    QRCode qrCode = new QRCode(qrCodeData);
+                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                    // Сохраняем QR-код во временный файл
+                    string tempQrPath = Path.Combine(Path.GetTempPath(), "temp_qr.png");
+                    qrCodeImage.Save(tempQrPath, ImageFormat.Png);
+
+                    using (var document = new Document())
+                    {
+                        using (var writer = PdfWriter.GetInstance(document, new FileStream(saveFileDialog.FileName, FileMode.Create)))
+                        {
+                            document.Open();
+
+                            // Создаем шрифты с поддержкой кириллицы
+                            var titleFont = new PdfFont(baseFont, 18, PdfFont.BOLD);
+                            var normalFont = new PdfFont(baseFont, 12, PdfFont.NORMAL);
+
+                            // Добавляем заголовок
+                            var title = new Paragraph("Чек об оплате бронирования", titleFont);
+                            title.Alignment = Element.ALIGN_CENTER;
+                            title.SpacingAfter = 20f;
+                            document.Add(title);
+
+                            // Создаем таблицу для размещения QR-кода и информации
+                            PdfPTable table = new PdfPTable(2);
+                            table.WidthPercentage = 100;
+                            table.SetWidths(new float[] { 1, 1 });
+
+                            // Левая колонка с информацией
+                            PdfPTable infoTable = new PdfPTable(1);
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Номер бронирования: {booking.BookingID}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Отель: {booking.Rooms.Hotels.HotelName}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Номер комнаты: {booking.Rooms.RoomNumber}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Тип номера: {booking.Rooms.RoomTypes.TypeName}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Дата заезда: {booking.CheckInDate:d}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Дата выезда: {booking.CheckOutDate:d}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Сумма оплаты: {booking.TotalPrice:C}", normalFont)) { Border = 0 });
+                            infoTable.AddCell(new PdfPCell(new Paragraph($"Дата оплаты: {booking.BookingDate:d}", normalFont)) { Border = 0 });
+
+                            // Правая колонка с QR-кодом
+                            PdfImage qrImage = PdfImage.GetInstance(tempQrPath);
+                            qrImage.ScaleToFit(200, 200);
+                            PdfPCell qrCell = new PdfPCell(qrImage);
+                            qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            qrCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                            qrCell.Border = 0;
+
+                            // Добавляем колонки в таблицу
+                            table.AddCell(new PdfPCell(infoTable) { Border = 0 });
+                            table.AddCell(qrCell);
+
+                            document.Add(table);
+
+                            // Добавляем информацию о клиенте
+                            document.Add(new Paragraph("\nИнформация о клиенте:", normalFont));
+                            document.Add(new Paragraph($"Имя: {currentUser.FirstName}", normalFont));
+                            document.Add(new Paragraph($"Фамилия: {currentUser.LastName}", normalFont));
+                            document.Add(new Paragraph($"Email: {currentUser.Email}", normalFont));
+
+                            document.Close();
+                        }
+                    }
+
+                    // Удаляем временный файл QR-кода
+                    if (File.Exists(tempQrPath))
+                    {
+                        File.Delete(tempQrPath);
+                    }
+
+                    // Открываем сгенерированный PDF
+                    System.Diagnostics.Process.Start(saveFileDialog.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при создании чека: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
+            try
+            {
+                if (dbContext != null)
+                {
+                    if (dbContext.Database.Connection.State == System.Data.ConnectionState.Open)
+                    {
+                        dbContext.Database.Connection.Close();
+                    }
+                    dbContext.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при закрытии приложения: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             base.OnClosed(e);
-            dbContext?.Dispose();
         }
     }
 }
