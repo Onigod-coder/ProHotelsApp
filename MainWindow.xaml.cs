@@ -135,6 +135,7 @@ namespace HotelsApp
         public string HotelName => Booking.Rooms.Hotels.HotelName;
         public string RoomNumber => Booking.Rooms.RoomNumber;
         public string RoomType => Booking.Rooms.RoomTypes.TypeName;
+        public int GuestCount => Booking.Rooms.RoomTypes.Capacity;
         public DateTime CheckInDate => Booking.CheckInDate;
         public DateTime CheckOutDate => Booking.CheckOutDate;
         public decimal TotalPrice => Booking.TotalPrice;
