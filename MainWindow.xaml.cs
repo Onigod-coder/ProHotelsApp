@@ -1006,7 +1006,7 @@ namespace HotelsApp
                             var normalFont = new PdfFont(baseFont, 12, PdfFont.NORMAL);
 
                             // Добавляем заголовок
-                            var title = new Paragraph("Чек об оплате бронирования", titleFont);
+                            var title = new Paragraph("Чек об оплате бронирования \n Демонстрационный чек(НЕ ЯВЛЯЕТСЯ РЕАЛЬНЫМ)", titleFont);
                             title.Alignment = Element.ALIGN_CENTER;
                             title.SpacingAfter = 20f;
                             document.Add(title);

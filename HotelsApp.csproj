@@ -97,8 +97,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="C:/Users/onigo/Desktop/HotelsApp/Styles/\MainStyles.xaml">
-      <Link>MainStyles.xaml</Link>
+    <Page Include="Styles\MainStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\TextStyles.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="LoginWindow.xaml">
@@ -201,14 +209,8 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>HotelModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="C:/Users/onigo/Desktop/HotelsApp/Styles/\ButtonStyles.xaml %28new file%29">
-      <Link>ButtonStyles.xaml %28new file%29</Link>
-    </None>
-    <None Include="C:/Users/onigo/Desktop/HotelsApp/Styles/\MainStyles.xaml %28new file%29">
-      <Link>MainStyles.xaml %28new file%29</Link>
-    </None>
-    <None Include="C:/Users/onigo/Desktop/HotelsApp/Styles/\TextStyles.xaml %28new file%29">
-      <Link>TextStyles.xaml %28new file%29</Link>
+    <None Include="Styles\MainStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </None>
     <None Include="Model\HotelModel.edmx.diagram">
       <DependentUpon>HotelModel.edmx</DependentUpon>
@@ -236,7 +238,7 @@
     <Content Include="ProHotel.sql" />
     <Resource Include="Resources\Rooms\*.jpg" />
     <Resource Include="Resources\Rooms\*.jpeg" />
-    <Resource Include="Resources\Hotels\hotel__1.jpg" />
+    <Resource Include="Resources\Hotels\*.jpg" />
     <Resource Include="Resources\Hotels\default.jpg" />
     <Resource Include="Resources\Hotels\hotel__10.jpg" />
     <Resource Include="Resources\Hotels\hotel__11.jpg" />
