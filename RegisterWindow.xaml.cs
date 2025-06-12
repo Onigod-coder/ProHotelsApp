@@ -204,7 +204,6 @@ namespace HotelsApp
 
             PasswordStrengthBar.Value = strength * 20; // 0-100% (5 критериев)
 
-            // Замена switch expression на классический switch
             switch (strength)
             {
                 case 0:
