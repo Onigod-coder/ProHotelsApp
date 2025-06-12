@@ -11,8 +11,6 @@ namespace HotelsApp.Model
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
     
     public partial class Hotels
     {
@@ -25,21 +23,19 @@ namespace HotelsApp.Model
     
         public int HotelID { get; set; }
         public int AddressID { get; set; }
-        [Required]
-        [StringLength(100)]
         public string HotelName { get; set; }
-        public int StarRating { get; set; }
-        [StringLength(500)]
+        public Nullable<int> StarRating { get; set; }
         public string Description { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        [NotMapped]
-        public string HotelImage { get; set; }
     
         public virtual Addresses Addresses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Employees> Employees { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rooms> Rooms { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string HotelImage { get; set; }
     }
 }

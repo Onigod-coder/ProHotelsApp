@@ -25,7 +25,8 @@ namespace HotelsApp.Model
         public string Street { get; set; }
         public string BuildingNumber { get; set; }
         public string PostalCode { get; set; }
-    
+        public string HotelImage { get; set; }
+
         public virtual Cities Cities { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Hotels> Hotels { get; set; }

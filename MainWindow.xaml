@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotelsApp"
+        xmlns:converters="clr-namespace:HotelsApp.Converters"
         mc:Ignorable="d"
         Title="HotelsApp - Бронирование отелей" 
         WindowStartupLocation="CenterScreen"
@@ -12,8 +13,8 @@
 
     <Window.Resources>
         <!-- Стили для приложения -->
-        <local:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter"/>
-        <local:PaidStatusToVisibilityConverter x:Key="PaidStatusToVisibilityConverter"/>
+        <converters:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter"/>
+        <converters:PaidStatusToVisibilityConverter x:Key="PaidStatusToVisibilityConverter"/>
         <Style x:Key="MainButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#FF1E88E5"/>
             <Setter Property="Foreground" Value="White"/>

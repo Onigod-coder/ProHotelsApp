@@ -134,6 +134,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\StatusToVisibilityConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converters\PaidStatusToVisibilityConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Model\Addresses.cs">
       <DependentUpon>HotelModel.tt</DependentUpon>
     </Compile>

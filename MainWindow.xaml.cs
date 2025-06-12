@@ -147,7 +147,10 @@ namespace HotelsApp
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+}
 
+namespace HotelsApp
+{
     public partial class MainWindow : Window
     {
         private ProHotelEntities dbContext;
