@@ -7,9 +7,9 @@ namespace HotelsApp.Services
 {
     public class HotelService
     {
-        private readonly Entities _dbContext;
+        private readonly ProHotelEntities _dbContext;
 
-        public HotelService(Entities dbContext)
+        public HotelService(ProHotelEntities dbContext)
         {
             _dbContext = dbContext;
         }
@@ -50,15 +50,22 @@ namespace HotelsApp.Services
                     query = query.Where(h => h.Rooms.Any(r => r.Amenities.Any(a => amenities.Contains(a.AmenityID))));
 
                 // Сортировка
-                query = sortBy.ToLower() switch
+                var sortByLower = sortBy.ToLower();
+                if (sortByLower == "price")
                 {
-                    "price" => ascending ? query.OrderBy(h => h.Rooms.Min(r => r.RoomTypes.BasePrice))
-                                        : query.OrderByDescending(h => h.Rooms.Min(r => r.RoomTypes.BasePrice)),
-                    "name" => ascending ? query.OrderBy(h => h.HotelName)
-                                      : query.OrderByDescending(h => h.HotelName),
-                    _ => ascending ? query.OrderBy(h => h.StarRating)
-                                  : query.OrderByDescending(h => h.StarRating)
-                };
+                    query = ascending ? query.OrderBy(h => h.Rooms.Min(r => r.RoomTypes.BasePrice))
+                                     : query.OrderByDescending(h => h.Rooms.Min(r => r.RoomTypes.BasePrice));
+                }
+                else if (sortByLower == "name")
+                {
+                    query = ascending ? query.OrderBy(h => h.HotelName)
+                                     : query.OrderByDescending(h => h.HotelName);
+                }
+                else
+                {
+                    query = ascending ? query.OrderBy(h => h.StarRating)
+                                     : query.OrderByDescending(h => h.StarRating);
+                }
 
                 // Пагинация
                 var totalCount = query.Count();
@@ -87,12 +94,13 @@ namespace HotelsApp.Services
 
                 // Получаем предпочтения пользователя (города, типы отелей)
                 var preferredCities = userBookings.Select(h => h.Addresses.CityID).Distinct();
-                var preferredStarRating = userBookings.Average(h => h.StarRating);
+                var preferredStarRating = userBookings.Where(h => h.StarRating.HasValue).Average(h => h.StarRating.Value);
 
                 // Ищем похожие отели
                 return _dbContext.Hotels
                     .Where(h => preferredCities.Contains(h.Addresses.CityID) &&
-                               Math.Abs(h.StarRating - preferredStarRating) <= 1)
+                               h.StarRating.HasValue &&
+                               Math.Abs(h.StarRating.Value - preferredStarRating) <= 1)
                     .OrderByDescending(h => h.StarRating)
                     .Take(count)
                     .ToList();
@@ -103,6 +111,10 @@ namespace HotelsApp.Services
             }
         }
 
+        // Методы для работы с избранным отключены, так как модель Favorites отсутствует в базе данных
+        // Раскомментируйте после добавления таблицы Favorites в базу данных
+        
+        /*
         public void AddToFavorites(int customerId, int hotelId)
         {
             try
@@ -157,5 +169,6 @@ namespace HotelsApp.Services
                 throw new Exception("Ошибка при получении избранных отелей", ex);
             }
         }
+        */
     }
 } 

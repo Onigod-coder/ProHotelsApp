@@ -10,10 +10,10 @@ namespace HotelsApp.Services
 {
     public class BookingService
     {
-        private readonly Entities _dbContext;
+        private readonly ProHotelEntities _dbContext;
         private readonly NotificationService _notificationService;
 
-        public BookingService(Entities dbContext, NotificationService notificationService)
+        public BookingService(ProHotelEntities dbContext, NotificationService notificationService)
         {
             _dbContext = dbContext;
             _notificationService = notificationService;
@@ -27,7 +27,7 @@ namespace HotelsApp.Services
                 if (room == null)
                     throw new Exception("Номер не найден");
 
-                if (!room.IsAvailable)
+                if (!room.IsAvailable.HasValue || !room.IsAvailable.Value)
                     throw new Exception("Номер недоступен для бронирования");
 
                 var nights = (checkOutDate - checkInDate).Days;

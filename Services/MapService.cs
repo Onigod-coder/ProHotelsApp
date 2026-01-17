@@ -1,7 +1,8 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Text.Json;
+using System.Linq;
+using Newtonsoft.Json;
 using HotelsApp.Model;
 
 namespace HotelsApp.Services
@@ -25,7 +26,7 @@ namespace HotelsApp.Services
                 var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={encodedAddress}&key={_apiKey}";
 
                 var response = await _httpClient.GetStringAsync(url);
-                var result = JsonSerializer.Deserialize<GeocodingResponse>(response);
+                var result = JsonConvert.DeserializeObject<GeocodingResponse>(response);
 
                 if (result?.Results?.Length > 0)
                 {
@@ -71,7 +72,7 @@ namespace HotelsApp.Services
                          $"&key={_apiKey}";
 
                 var response = await _httpClient.GetStringAsync(url);
-                var result = JsonSerializer.Deserialize<DistanceMatrixResponse>(response);
+                var result = JsonConvert.DeserializeObject<DistanceMatrixResponse>(response);
 
                 if (result?.Rows?.Length > 0 && result.Rows[0].Elements?.Length > 0)
                 {
@@ -97,7 +98,7 @@ namespace HotelsApp.Services
                          $"&key={_apiKey}";
 
                 var response = await _httpClient.GetStringAsync(url);
-                var result = JsonSerializer.Deserialize<PlacesResponse>(response);
+                var result = JsonConvert.DeserializeObject<PlacesResponse>(response);
 
                 if (result?.Results?.Length > 0)
                 {
